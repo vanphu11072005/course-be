@@ -21,13 +21,13 @@ const port = AppConfig.port;
 
 // ===== Socket.IO =====
 const io = new Server(server, {
-  cors: "https://webcoure-qaoiq4bwy-phucit226s-projects.vercel.app", // replace with your React app URL
+  cors: "https://webcoure-fe.vercel.app", // replace with your React app URL
 });
 
 db.sequelize.sync({ force: false });
 app.use(
   cors({
-    origin: "https://webcoure-qaoiq4bwy-phucit226s-projects.vercel.app", // replace with your React app URL
+    origin: "https://webcoure-fe.vercel.app", // replace with your React app URL
     credentials: true,
   })
 ); // Enable CORS for all routes
