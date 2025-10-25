@@ -12,55 +12,59 @@ class AuthController extends BaseController {
   }
 
   async register(req, res) {
-    const { name, email, password } = req.body;
+    try {
+      const { name, email, password } = req.body;
 
-    const existingUser = await this.service.getUserByEmail(email);
-    if (existingUser) return res.status(400).json({ message: "User exists" });
+      if (!name || !email || !password) {
+        return res
+          .status(400)
+          .json({ message: "Name, email, password are required" });
+      }
 
-    // const passwordHash = await HashHelper.hashPassword(password);
+      const existingUser = await this.service.getUserByEmail(email);
+      if (existingUser) return res.status(400).json({ message: "User exists" });
 
-    const studentRole = await db.Role.findOne({ where: { name: "student" } });
-    if (!studentRole) {
-      return res.status(500).json({ message: "Default role not found" });
+      const studentRole = await db.Role.findOne({ where: { name: "student" } });
+      if (!studentRole) {
+        return res.status(500).json({ message: "Default role not found" });
+      }
+
+      const user = await this.service.createUser({
+        name,
+        email,
+        password,
+        roleId: studentRole.id,
+      });
+
+      await db.Profile.create({ userId: user.id, fullName: user.name });
+
+      const verifyToken = JwtHelper.generateAccessToken(
+        { sub: email },
+        "verify",
+        "15m"
+      );
+
+      const verifyLink = `${process.env.CLIENT_URL}/auth/verify-email/${verifyToken}`;
+
+      await MailHelper.sendMail(
+        email,
+        "Xác minh địa chỉ email của bạn",
+        `<h2>Xin chào ${name}</h2>
+       <p>Nhấn vào link để xác minh: <a href="${verifyLink}">Xác minh ngay</a></p>`
+      );
+
+      res.status(201).json({
+        message:
+          "User created successfully. Please check your email to verify your account.",
+      });
+    } catch (error) {
+      console.error("Register error:", error);
+      res.status(500).json({
+        message: "Internal Server Error",
+        error: error.message,
+        stack: error.stack,
+      });
     }
-
-    const user = await this.service.createUser({
-      name,
-      email,
-      password,
-      roleId: studentRole.id,
-    });
-
-    await db.Profile.create({
-      userId: user.id,
-      fullName: user.name,
-    });
-
-    const verifyToken = JwtHelper.generateAccessToken(
-      { sub: email },
-      "verify",
-      "15m"
-    );
-
-    const verifyLink = `${process.env.CLIENT_URL}/auth/verify-email/${verifyToken}`;
-
-    // ✅ Gửi email xác minh
-    await MailHelper.sendMail(
-      email,
-      "Xác minh địa chỉ email của bạn",
-      `
-        <h2>Xin chào ${name},</h2>
-        <p>Cảm ơn bạn đã đăng ký tài khoản tại <b>Học Dễ Thôi</b>!</p>
-        <p>Nhấn vào liên kết dưới đây để xác minh email của bạn:</p>
-        <a href="${verifyLink}" target="_blank">Xác minh ngay</a>
-        <p><i>Liên kết sẽ hết hạn sau 15 phút.</i></p>
-      `
-    );
-
-    res.status(201).json({
-      message:
-        "User created successfully. Please check your email to verify your account.",
-    });
   }
 
   // ✅ API xác minh email (GET /api/auth/verify-email?token=...)
