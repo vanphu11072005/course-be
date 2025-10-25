@@ -20,6 +20,7 @@ class OrderRepository {
   }) {
     const orderDir = sortOrder.toLowerCase() === "asc" ? "ASC" : "DESC";
     const where = {};
+    if (paymentStatus) where.paymentStatus = paymentStatus;
 
     // 🔍 Tìm kiếm theo id hoặc tên user
     if (search) {
@@ -28,7 +29,6 @@ class OrderRepository {
       ];
     }
 
-    if (paymentStatus) where.paymentStatus = paymentStatus;
 
     // 🧩 Xử lý sắp xếp
     const orderArray = [];
@@ -116,7 +116,7 @@ class OrderRepository {
   // 🔹 Lấy danh sách order của user
   async getUserOrders(userId) {
     return this.model.findAll({
-      where: { userId },
+      where: { userId, paymentStatus: "paid" },
       order: [["createdAt", "DESC"]],
       include: [
         {
@@ -139,15 +139,23 @@ class OrderRepository {
     const order = await this.model.findByPk(id);
     if (!order) return null;
 
-    await order.update({
-      userId: data.userId ?? order.userId,
-      couponId: data.couponId ?? order.couponId,
-      totalAmount: data.totalAmount ?? order.totalAmount,
-      status: data.status ?? order.status,
-      paymentMethod: data.paymentMethod ?? order.paymentMethod,
-      paymentStatus: data.paymentStatus ?? order.paymentStatus,
-      note: data.note ?? order.note,
-    });
+    if (order.paymentStatus !== "paid") {
+      await order.update({
+        userId: data.userId ?? order.userId,
+        couponId: data.couponId ?? order.couponId,
+        note: data.note ?? order.note,
+      });
+    } else {
+      await order.update({
+        userId: data.userId ?? order.userId,
+        couponId: data.couponId ?? order.couponId,
+        totalAmount: data.totalAmount ?? order.totalAmount,
+        status: data.status ?? order.status,
+        paymentMethod: data.paymentMethod ?? order.paymentMethod,
+        paymentStatus: data.paymentStatus ?? order.paymentStatus,
+        note: data.note ?? order.note,
+      });
+    }
 
     return order;
   }

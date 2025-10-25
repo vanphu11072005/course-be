@@ -1,28 +1,36 @@
 import { Router } from "express";
 
+import settingRoutes from "./setting.js";
+import searchRoutes from "./search.js";
 import authRoutes from "./auth.js";
 import rolesRoutes from "./roles.js";
 import usersRoutes from "./users.js";
-// import profilesRoutes from './profiles.js';
+import dashboardRoutes from "./dashboard.js";
 import categoriesRoutes from "./categories.js";
 import coursesRoutes from "./courses.js";
 import lessonsRoutes from "./lessons.js";
 import ordersRoutes from "./orders.js";
 import orderItemsRoutes from "./orderItems.js";
 import paymentsRoutes from "./payments.js";
-import reviewsRoutes from './reviews.js';
-import couponsRoutes from './coupons.js';
+import reviewsRoutes from "./reviews.js";
+import couponsRoutes from "./coupons.js";
+import profilesRoutes from "./profile.js";
+import chatCourses from "./chat.js";
 // import enrollmentsRoutes from './enrollments.js';
 // import certificatesRoutes from './certificates.js';
 import uploadsRoutes from "./uploads.js";
 
 export default {
   v1: Router()
+    .use("/settings", settingRoutes)
+    .use("/admin/search", searchRoutes)
     .use("/auth", authRoutes)
     .use("/roles", rolesRoutes)
     .use("/users", usersRoutes)
-    //   .use("/profiles", profilesRoutes)
+    .use("/profiles", profilesRoutes)
+    .use("/dashboard", dashboardRoutes)
     .use("/courses", coursesRoutes)
+    .use("/chat", chatCourses)
     // .use("/courses/:courseId/lessons", lessonsRoutes)
     // .use("/courses/:courseId/reviews", reviewsRoutes)
     .use("/lessons", lessonsRoutes)

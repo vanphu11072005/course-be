@@ -78,6 +78,17 @@ class UserRepository {
         as: "profile",
         attributes: ["fullName", "phone", "address", "dateOfBirth"],
       },
+      {
+        model: db.Enrollment,
+        as: "enrollments",
+        include: [
+          {
+            model: db.Course,
+            as: "course",
+            attributes: ["id", "title"],
+          },
+        ],
+      },
     ];
 
     if (includeRefreshToken)

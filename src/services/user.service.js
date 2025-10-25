@@ -8,7 +8,14 @@ class UserService {
 
   // Lấy danh sách users
   getListUsers({ page, pageSize, role, search, sortField, sortOrder }) {
-    return this.repository.getAllUsers({ page, pageSize, role, search, sortField, sortOrder });
+    return this.repository.getAllUsers({
+      page,
+      pageSize,
+      role,
+      search,
+      sortField,
+      sortOrder,
+    });
   }
 
   // Lấy user theo id
@@ -18,6 +25,7 @@ class UserService {
 
   // Tạo user mới (hash password trước khi lưu)
   async createUser(data) {
+    console.log(data);
     if (!data.password) {
       throw new Error("Password is required");
     }

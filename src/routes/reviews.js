@@ -9,11 +9,30 @@ router.get('/:id', reviewController.getReviewById);
 
 router.patch(
   '/:id/approve',
-  middlewares.auth, middlewares.role('admin'), reviewController.approveReview
+  middlewares.auth, 
+  middlewares.role('admin'), 
+  reviewController.approveReview
 );
 
-router.post('/', middlewares.auth, middlewares.role('student'), reviewController.createReview);
-router.patch('/:id', middlewares.auth, middlewares.role('student'), reviewController.updateReview);
-router.delete('/:id', middlewares.auth, middlewares.role('student'), reviewController.deleteReview);
+router.post(
+  '/', 
+  middlewares.auth,
+  middlewares.role('student'), 
+  reviewController.createReview
+);
+
+router.patch(
+  '/:id', 
+  middlewares.auth,
+  middlewares.role('student'), 
+  reviewController.updateReview
+);
+
+router.delete(
+  '/:id', 
+  middlewares.auth,
+  middlewares.role('student'), 
+  reviewController.deleteReview
+);
 
 export default router;

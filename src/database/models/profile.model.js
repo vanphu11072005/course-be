@@ -25,6 +25,7 @@ export default (sequelize) => {
       address: { type: DataTypes.STRING(255) },
       dateOfBirth: { type: DataTypes.DATEONLY },
     },
+
     {
       sequelize,
       modelName: "Profile",

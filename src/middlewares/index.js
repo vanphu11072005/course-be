@@ -3,6 +3,7 @@ import errorHandler from "./error.middleware.js";
 import role from "./role.middleware.js";
 import upload from "./upload.middleware.js";
 import validate from "./validate.middleware.js";
+import { checkMaintenance } from "./maintenance.middleware.js";
 
 export default {
   auth,
@@ -10,4 +11,5 @@ export default {
   role,
   upload,
   validate,
+  checkMaintenance,
 };

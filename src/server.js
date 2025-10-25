@@ -15,36 +15,39 @@ import db from "./database/models/index.js";
 import AppConfig from "./config/index.js";
 import ApiRouter from "./routes/index.js";
 
+import middlewares from "./middlewares/index.js";
+const { auth, role, checkMaintenance } = middlewares;
+import { toggleMaintenance, getMaintenanceStatus } from "./controllers/setting.controller.js";
+
 const app = express();
 const server = createServer(app);
 const port = AppConfig.port;
 
 // ===== Socket.IO =====
 const io = new Server(server, {
-  cors: "https://webcoure-fe.vercel.app", // replace with your React app URL
+  cors: process.env.CLIENT_URL, // replace with your React app URL
 });
 
 db.sequelize.sync({ force: false });
 app.use(
   cors({
-    origin: "https://webcoure-fe.vercel.app", // replace with your React app URL
+    origin: process.env.CLIENT_URL, // replace with your React app URL
     credentials: true,
   })
 ); // Enable CORS for all routes
 // console.log('req.cookies:', req.cookies);
 // console.log('req.body:', req.body);
-
-app.use(express.json()); // Middleware to parse JSON bodies
-app.use(cookieParser());
-// app.use(`/api/${AppConfig.apiVersion}/payments`, paymentRoutes);
 app.post(
-  `/api/v1/payments/webhook`,
+  `/api/${AppConfig.apiVersion}/payments/webhook`,
   express.raw({ type: "application/json" }),
   stripeWebhook
 );
 
+app.use(express.json()); // Middleware to parse JSON bodies
+app.use(cookieParser());
+app.use(`/api/${AppConfig.apiVersion}/payments`, paymentRoutes);
+
 // Các route payments khác vẫn dùng json
-app.use(`/api/v1/payments`, express.json(), paymentRoutes);
 // ===== PASSPORT JWT STRATEGY =====
 const jwtFromRequest = ExtractJwt.fromExtractors([
   ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -82,6 +85,24 @@ app.use(passport.initialize());
 
 // cho phép truy cập thư mục uploads
 app.use("/uploads", express.static("uploads"));
+
+// Admin toggle bảo trì
+app.put(
+  `/api/${AppConfig.apiVersion}/settings/maintenance`,
+  auth,        // verify token, set req.user
+  role("admin"),
+  toggleMaintenance
+);
+
+// API check maintenance cho FE
+app.get(
+  `/api/${AppConfig.apiVersion}/settings/maintenance`,
+  checkMaintenance,  // block user thường nếu maintenance
+  getMaintenanceStatus
+);
+
+// 🔥 Check bảo trì toàn hệ thống
+app.use(checkMaintenance);
 
 app.use(`/api/${AppConfig.apiVersion}`, ApiRouter[AppConfig.apiVersion]);
 

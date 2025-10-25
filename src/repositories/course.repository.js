@@ -94,7 +94,37 @@ class CourseRepository {
   }
 
   async getCourseById(id) {
-    return this.model.findByPk(id);
+    return this.model.findByPk(id, {
+      include: [
+        {
+          model: db.User,
+          as: "instructor",
+          attributes: ["id", "name"],
+        },
+        {
+          model: this.categoryModel,
+          as: "category",
+          attributes: ["id", "name"],
+        },
+        {
+          model: db.Lesson,
+          as: "lessons",
+          attributes: ["id", "title"],
+        },
+        {
+          model: this.enrollmentModel,
+          as: "enrollments",
+          attributes: [], // chỉ dùng để count student
+        },
+      ],
+      attributes: {
+        include: [
+          [Sequelize.fn("COUNT", Sequelize.col("enrollments.id")), "studentCount"],
+        ],
+      },
+      group: ["Course.id", "category.id", "instructor.id", "lessons.id"],
+      subQuery: false,
+    });
   }
 
   async createCourse(courseData) {

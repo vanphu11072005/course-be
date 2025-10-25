@@ -2,6 +2,7 @@ import BaseController from "./base.controller.js";
 import UserService from "../services/user.service.js";
 import * as HashHelper from "../helpers/hash.helper.js";
 import * as JwtHelper from "../helpers/jwt.helper.js";
+import * as MailHelper from "../helpers/mailer.helper.js";
 import db from "../database/models/index.js";
 
 class AuthController extends BaseController {
@@ -14,24 +15,73 @@ class AuthController extends BaseController {
     const { name, email, password } = req.body;
 
     const existingUser = await this.service.getUserByEmail(email);
-    if (existingUser)
-      return res.status(400).json({ message: "User exists" });
+    if (existingUser) return res.status(400).json({ message: "User exists" });
 
-    const passwordHash = await HashHelper.hashPassword(password);
+    // const passwordHash = await HashHelper.hashPassword(password);
 
     const studentRole = await db.Role.findOne({ where: { name: "student" } });
     if (!studentRole) {
       return res.status(500).json({ message: "Default role not found" });
     }
 
-    await this.service.createUser({
+    const user = await this.service.createUser({
       name,
       email,
-      passwordHash,
+      password,
       roleId: studentRole.id,
     });
 
-    res.status(201).json({ message: "User created" });
+    await db.Profile.create({
+      userId: user.id,
+      fullName: user.name,
+    });
+
+    const verifyToken = JwtHelper.generateAccessToken(
+      { sub: email },
+      "verify",
+      "15m"
+    );
+
+    const verifyLink = `${process.env.CLIENT_URL}/auth/verify-email/${verifyToken}`;
+
+    // ✅ Gửi email xác minh
+    await MailHelper.sendMail(
+      email,
+      "Xác minh địa chỉ email của bạn",
+      `
+        <h2>Xin chào ${name},</h2>
+        <p>Cảm ơn bạn đã đăng ký tài khoản tại <b>Học Dễ Thôi</b>!</p>
+        <p>Nhấn vào liên kết dưới đây để xác minh email của bạn:</p>
+        <a href="${verifyLink}" target="_blank">Xác minh ngay</a>
+        <p><i>Liên kết sẽ hết hạn sau 15 phút.</i></p>
+      `
+    );
+
+    res.status(201).json({
+      message:
+        "User created successfully. Please check your email to verify your account.",
+    });
+  }
+
+  // ✅ API xác minh email (GET /api/auth/verify-email?token=...)
+  async verifyEmail(req, res) {
+    try {
+      const { token } = req.query;
+      if (!token)
+        return res.status(400).json({ message: "Missing verification token" });
+
+      const payload = JwtHelper.verifyToken(token, "verify");
+      if (!payload)
+        return res.status(400).json({ message: "Invalid or expired token" });
+
+      res.json({
+        message: "Email verified successfully ✅",
+        email: payload.sub,
+      });
+    } catch (err) {
+      console.error("Verify email error:", err);
+      res.status(500).json({ message: "Server error" });
+    }
   }
 
   async login(req, res) {
@@ -52,7 +102,14 @@ class AuthController extends BaseController {
     // Set token vào cookie
     JwtHelper.setTokensAsCookies(res, accessToken, refreshToken);
 
-    res.json({ accessToken, refreshToken });
+    const userData = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      roleId: user.roleId,
+    };
+
+    res.json({ accessToken, refreshToken, user: userData });
   }
 
   async refreshToken(req, res) {
@@ -102,4 +159,4 @@ class AuthController extends BaseController {
   }
 }
 
-export default new AuthController;
+export default new AuthController();

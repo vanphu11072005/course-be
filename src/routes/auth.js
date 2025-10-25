@@ -11,5 +11,6 @@ router.post("/login", authController.login);
 router.post("/logout", authController.logout);
 router.post("/refresh", authController.refreshToken);
 router.get("/me", middlewares.auth, authController.getProfile);
+router.get("/verify-email", authController.verifyEmail);
 
 export default router;

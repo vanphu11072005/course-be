@@ -57,7 +57,6 @@ class CourseController extends BaseController {
   // Tạo course mới
   async createCourse(req, res) {
     const data = req.body;
-    const newCourse = await this.service.createCourse(data);
     
     if (!data.slug && data.title) {
       data.slug = slugify(data.title, { lower: true, strict: true });
@@ -69,6 +68,7 @@ class CourseController extends BaseController {
       data.thumbnailUrl = "/uploads/default-thumbnail.jpg";
     }
     
+    const newCourse = await this.service.createCourse(data);
     
     data.categoryId = data.categoryId;
     data.instructorId = data.instructorId;
