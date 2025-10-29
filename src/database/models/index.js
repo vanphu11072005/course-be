@@ -16,6 +16,7 @@ import enrollmentModel from "./enrollment.model.js";
 import certificateModel from "./certificate.model.js";
 import refreshTokenModel from "./refreshToken.model.js";
 import settingModel from "./setting.model.js"
+import chatModel from "./chat.model.js";
 
 const sequelize = new Sequelize(AppConfig.database.url, {
   dialect: AppConfig.database.dialect, // ✅ Rất quan trọng!
@@ -40,6 +41,7 @@ const db = {
   Certificate: certificateModel(sequelize),
   RefreshToken: refreshTokenModel(sequelize),
   Setting: settingModel(sequelize),
+  Chat: chatModel(sequelize),
 };
 
 // Gọi associate cho tất cả models

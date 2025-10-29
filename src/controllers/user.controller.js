@@ -82,9 +82,12 @@ class UserController extends BaseController {
   // Cập nhật user
   async updateUser(req, res) {
     const { id } = req.params;
-    const userData = req.body;
-    const updatedUser = await this.service.updateUser(id, userData);
+    const data = req.body;
 
+    if (req.file) {
+      data.avatarUrl = `/uploads/${req.file.filename}`;
+    }
+    
     if (typeof data.profile === "string") {
       try {
         data.profile = JSON.parse(data.profile);
@@ -92,10 +95,8 @@ class UserController extends BaseController {
         data.profile = null;
       }
     }
-
-    if (req.file) {
-      data.avatarlUrl = `/uploads/${req.file.filename}`;
-    }
+    
+    const updatedUser = await this.service.updateUser(id, data);
 
     if (!updatedUser) {
       return res

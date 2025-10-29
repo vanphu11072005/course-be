@@ -30,6 +30,10 @@ import ProfileService from "../services/profile.service.js";
         try {
         const userId = req.user.id;
         const data = req.body;
+        
+        if (req.file) {
+            data.avatarUrl = `/uploads/${req.file.filename}`;
+        }
 
         const updatedProfile = await ProfileService.updateProfile(userId, data);
 

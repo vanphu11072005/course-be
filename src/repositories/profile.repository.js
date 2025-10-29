@@ -53,6 +53,7 @@ class ProfileRepository {
     await user.update({
       name: data.name ?? user.name,
       email: data.email ?? user.email,
+      avatarUrl: data.avatarUrl ?? user.avatarUrl,
     });
 
     if (user.profile) {

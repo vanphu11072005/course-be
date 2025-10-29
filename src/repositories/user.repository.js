@@ -127,7 +127,6 @@ class UserRepository {
 
   // Cập nhật user
   async updateUser(id, userData) {
-    // Tìm user hiện tại
     const user = await this.model.findByPk(id, {
       include: [{ model: db.Profile, as: "profile" }],
     });
@@ -152,25 +151,14 @@ class UserRepository {
 
     // Xử lý profile
     if (userData.profile) {
-      if (user.Profile) {
-        // Nếu đã có profile thì update
-        await user.Profile.update({
-          fullName: userData.profile.fullName ?? user.Profile.fullName,
-          phone: userData.profile.phone ?? user.Profile.phone,
-          address: userData.profile.address ?? user.Profile.address,
-          dateOfBirth: userData.profile.dateOfBirth ?? user.Profile.dateOfBirth,
-        });
-      } else {
-        // Nếu chưa có profile thì tạo mới
-        await db.Profile.create({
-          id: uuidv4(),
-          userId: user.id,
-          fullName: userData.profile.fullName,
-          phone: userData.profile.phone || null,
-          address: userData.profile.address || null,
-          dateOfBirth: userData.profile.dateOfBirth || null,
-        });
-      }
+      await db.Profile.upsert({
+        id: user.profile?.id || uuidv4(),
+        userId: user.id,
+        fullName: userData.profile.fullName,
+        phone: userData.profile.phone || null,
+        address: userData.profile.address || null,
+        dateOfBirth: userData.profile.dateOfBirth || null,
+      });
     }
 
     // Trả về user kèm profile

@@ -2,6 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import cors from "cors";
 import dotenv from "dotenv";
+import { initChatSocket } from "./socket/chatHandler.js";
 import { stripeWebhook } from "./controllers/payment.controller.js";
 import paymentRoutes from "./routes/payments.js";
 dotenv.config();
@@ -25,10 +26,19 @@ const port = AppConfig.port;
 
 // ===== Socket.IO =====
 const io = new Server(server, {
-  cors: process.env.CLIENT_URL, // replace with your React app URL
+  cors: {
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  },
 });
 
+// Init chat socket handlers
+initChatSocket(io, db);
+
 db.sequelize.sync({ force: false });
+
+app.set("db", db);
+
 app.use(
   cors({
     origin: process.env.CLIENT_URL, // replace with your React app URL
