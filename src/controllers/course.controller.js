@@ -84,19 +84,19 @@ class CourseController extends BaseController {
   async updateCourse(req, res) {
     const { id } = req.params;
     const data = req.body;
-    const updatedCourse = await this.service.updateCourse(id, data);
-
+    
     if (req.file) {
       data.thumbnailUrl = `/uploads/${req.file.filename}`;
     }
-
+    
     if (data.title && !data.slug) {
       data.slug = slugify(data.title, { lower: true, strict: true });
     }
-
+    
     data.categoryId = data.categoryId;
     data.instructorId = data.instructorId;
-
+    
+    const updatedCourse = await this.service.updateCourse(id, data);
     
     if (!updatedCourse) {
       return res
