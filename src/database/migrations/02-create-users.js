@@ -21,7 +21,7 @@ export async function up(queryInterface, Sequelize) {
     },
     avatarUrl: { type: Sequelize.STRING(500), allowNull: true },
     status: {
-      type: Sequelize.ENUM("active", "inactive", "banned", "pending"),
+      type: Sequelize.ENUM("active", "inactive", "banned"),
       allowNull: false,
       defaultValue: "active",
     },

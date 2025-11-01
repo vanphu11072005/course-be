@@ -7,7 +7,13 @@ class CategoryService {
 
   // Lấy danh sách categories
   getListCategories({ page, pageSize, search, sortField, sortOrder }) {
-    return this.repository.getAllCategories({ page, pageSize, search, sortField, sortOrder });
+    return this.repository.getAllCategories({
+      page,
+      pageSize,
+      search,
+      sortField,
+      sortOrder,
+    });
   }
 
   // Lấy category theo id

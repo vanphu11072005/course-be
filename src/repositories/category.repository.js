@@ -9,21 +9,18 @@ class CategoryRepository {
   }
 
   // Lấy tất cả categories (có phân trang + search)
-  async getAllCategories({ 
-    page = 1, 
-    pageSize = 10, 
+  async getAllCategories({
+    page = 1,
+    pageSize = 10,
     search,
     sortField = "createdAt",
     sortOrder = "desc",
   }) {
-
     const orderDir = sortOrder.toLowerCase() === "asc" ? "ASC" : "DESC";
 
     const where = {};
     if (search) {
-      where[Op.or] = [
-        { name: { [Op.like]: `%${search}%` } },
-      ];
+      where[Op.or] = [{ name: { [Op.like]: `%${search}%` } }];
     }
 
     const orderArray = [];
@@ -42,7 +39,7 @@ class CategoryRepository {
       order: orderArray.length ? orderArray : [["createdAt", "DESC"]],
       include: [
         {
-          model: this.courseModel, 
+          model: this.courseModel,
           as: "courses",
           attributes: [],
           required: false,

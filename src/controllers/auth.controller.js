@@ -44,7 +44,7 @@ class AuthController extends BaseController {
         "15m"
       );
 
-      const verifyLink = `${process.env.CLIENT_URL}/auth/verify-email/${verifyToken}`;
+      const verifyLink = `${process.env.FRONTEND_URL}/auth/verify-email/${verifyToken}`;
 
       await MailHelper.sendMail(
         email,
