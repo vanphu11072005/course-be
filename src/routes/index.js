@@ -16,8 +16,6 @@ import reviewsRoutes from "./reviews.js";
 import couponsRoutes from "./coupons.js";
 import profilesRoutes from "./profile.js";
 import chatCourses from "./chat.js";
-// import enrollmentsRoutes from './enrollments.js';
-// import certificatesRoutes from './certificates.js';
 import uploadsRoutes from "./uploads.js";
 
 export default {
@@ -31,8 +29,6 @@ export default {
     .use("/dashboard", dashboardRoutes)
     .use("/courses", coursesRoutes)
     .use("/chat", chatCourses)
-    // .use("/courses/:courseId/lessons", lessonsRoutes)
-    // .use("/courses/:courseId/reviews", reviewsRoutes)
     .use("/lessons", lessonsRoutes)
     .use("/categories", categoriesRoutes)
     .use("/orders", ordersRoutes)
@@ -41,12 +37,6 @@ export default {
     .use("/orderItem", orderItemsRoutes)
     .use("/payments", paymentsRoutes)
     .use("/uploads", uploadsRoutes)
-
-    // Nested routes
     .use("/orders/:orderId/items", orderItemsRoutes),
-  // .use('/courses/:courseId/lessons', lessonsRoutes)
 };
 
-// Các route còn lại
-// router.use('/enrollments', enrollmentsRoutes);
-// router.use('/certificates', certificatesRoutes);

@@ -36,6 +36,10 @@ export async function up(queryInterface, Sequelize) {
       defaultValue: Sequelize.fn("NOW"),
     },
   });
+
+  await queryInterface.addIndex('users', ['roleId'], { name: 'idx_users_roleId' });
+  await queryInterface.addIndex('users', ['status'], { name: 'idx_users_status' });
+  await queryInterface.addIndex('users', ['status', 'createdAt'], { name: 'idx_users_status_createdAt' });
 }
 
 export async function down(queryInterface) {

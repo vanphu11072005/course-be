@@ -34,6 +34,8 @@ export async function up(queryInterface, Sequelize) {
       defaultValue: Sequelize.fn("NOW"),
     },
   });
+
+  await queryInterface.addIndex('lessons', ['courseId', 'position'], { name: 'idx_lessons_courseId_position' });
 }
 
 export async function down(queryInterface) {

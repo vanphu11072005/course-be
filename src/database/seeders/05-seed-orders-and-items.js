@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from "uuid";
 export async function up(queryInterface, Sequelize) {
   const now = new Date();
 
-  // Lấy users, courses, coupons từ DB
   const users = await queryInterface.sequelize.query(
     `SELECT id FROM users`,
     { type: Sequelize.QueryTypes.SELECT }

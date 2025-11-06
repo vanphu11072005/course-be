@@ -13,7 +13,7 @@ export async function up(queryInterface, Sequelize) {
       onDelete: "CASCADE",
     },
     token: { type: Sequelize.STRING(255), allowNull: false },
-    expiresAt: { type: Sequelize.DATE, allowNull: true },
+    expiresAt: { type: Sequelize.DATE, allowNull: false },
     createdAt: {
       type: Sequelize.DATE,
       allowNull: false,
@@ -25,6 +25,9 @@ export async function up(queryInterface, Sequelize) {
       defaultValue: Sequelize.fn("NOW"),
     },
   });
+
+  await queryInterface.addIndex('refresh_tokens', ['token'], { name: 'idx_refresh_tokens_token' });
+  await queryInterface.addIndex('refresh_tokens', ['userId'], { name: 'idx_refresh_tokens_userId' });
 }
 
 export async function down(queryInterface) {

@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
+import jwtConfig from "../config/jwt.config.js";
 import db from "../database/models/index.js";
+
 const { User, Role } = db;
 
 const auth = async (req, res, next) => {
@@ -10,7 +12,7 @@ const auth = async (req, res, next) => {
     }
 
     const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, jwtConfig.JWT_SECRET);
 
     const user = await User.findByPk(decoded.sub, {
       include: { model: Role, as: "role" }
@@ -19,7 +21,7 @@ const auth = async (req, res, next) => {
       return res.status(401).json({ message: "Invalid token user" });
     }
 
-    req.user = user; // attach vào request
+    req.user = user;
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid or expired token" });

@@ -34,7 +34,7 @@ export default (sequelize) => {
     },
     {
       sequelize, // truyền kết nối
-      modelName: "Lesson", // tên model
+      modelName: "Lesson",
       tableName: "lessons",
       timestamps: true,
     }

@@ -4,7 +4,6 @@ import { faker } from "@faker-js/faker";
 export async function up(queryInterface, Sequelize) {
   const now = new Date();
 
-  // Lấy orders đã tạo từ DB
   const orders = await queryInterface.sequelize.query(
     `SELECT id, totalAmount, status FROM orders`,
     { type: Sequelize.QueryTypes.SELECT }
@@ -62,6 +61,6 @@ export async function up(queryInterface, Sequelize) {
   await queryInterface.bulkInsert("payments", payments, {});
 }
 
-export async function down(queryInterface, Sequelize) {
+export async function down(queryInterface) {
   await queryInterface.bulkDelete("payments", null, {});
 }

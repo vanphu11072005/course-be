@@ -33,21 +33,19 @@ export default (sequelize) => {
       roleId: { type: DataTypes.UUID, allowNull: false },
       avatarUrl: { type: DataTypes.STRING(500), allowNull: true },
       status: {
-        type: DataTypes.STRING(20),
+        type: DataTypes.ENUM("active", "inactive", "banned"),
         allowNull: false,
         defaultValue: "active",
       },
     },
     {
       sequelize, // truyền kết nối
-      modelName: "User", // tên model
+      modelName: "User",
       tableName: "users",
       timestamps: true,
-      // 👇 This hides passwordHash from queries by default
       defaultScope: {
         attributes: { exclude: ["passwordHash"] },
       },
-      // Optional: allow an "includeSensitive" scope if you need the password
       scopes: {
         withPassword: {
           attributes: {},

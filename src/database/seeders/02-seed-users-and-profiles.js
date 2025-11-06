@@ -64,7 +64,7 @@ export async function up(queryInterface) {
       fullName,
       phone: faker.string.numeric(10),
       address: faker.location.streetAddress(),
-      dateOfBirth: faker.date.birthdate({ min: 25, max: 50, mode: "age" }),
+      dateOfBirth: faker.date.birthdate({ min: 18, max: 40, mode: "age" }),
       createdAt: now,
       updatedAt: now,
     });

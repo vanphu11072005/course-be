@@ -1,6 +1,5 @@
 import AppConfig from "../../config/index.js";
 import Sequelize from "sequelize";
-// import fs from 'fs';
 import userModel from "./user.model.js";
 import profileModel from "./profile.model.js";
 import categoryModel from "./category.model.js";
@@ -19,7 +18,7 @@ import settingModel from "./setting.model.js"
 import chatModel from "./chat.model.js";
 
 const sequelize = new Sequelize(AppConfig.database.url, {
-  dialect: AppConfig.database.dialect, // ✅ Rất quan trọng!
+  dialect: AppConfig.database.dialect,
   pool: AppConfig.database.pool,
 });
 
@@ -44,7 +43,6 @@ const db = {
   Chat: chatModel(sequelize),
 };
 
-// Gọi associate cho tất cả models
 Object.values(db).forEach((model) => {
   if (model?.associate) {
     model.associate(db);

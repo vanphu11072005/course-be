@@ -25,7 +25,6 @@ class UserService {
 
   // Tạo user mới (hash password trước khi lưu)
   async createUser(data) {
-    console.log(data);
     if (!data.password) {
       throw new Error("Password is required");
     }

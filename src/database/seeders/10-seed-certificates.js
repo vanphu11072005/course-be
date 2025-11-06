@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function up(queryInterface) {
   const now = new Date();
+
   const enrollments = await queryInterface.sequelize.query(
     `SELECT id, userId, courseId FROM enrollments`,
     { type: queryInterface.sequelize.QueryTypes.SELECT }
@@ -11,7 +12,7 @@ export async function up(queryInterface) {
   const certificates = [];
 
   for (const enrollment of enrollments) {
-    if (faker.datatype.boolean()) { // chỉ tạo certificate cho 50% học viên
+    if (faker.datatype.boolean()) {
       certificates.push({
         id: uuidv4(),
         userId: enrollment.userId,

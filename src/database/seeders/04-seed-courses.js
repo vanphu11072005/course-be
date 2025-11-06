@@ -22,11 +22,11 @@ export async function up(queryInterface, Sequelize) {
 
     courses.push({
       id: uuidv4(),
-      title: faker.commerce.productName(), // tạm dùng tên product làm title
+      title: faker.commerce.productName(),
       slug: faker.helpers.slugify(faker.commerce.productName()).toLowerCase(),
       description: faker.commerce.productDescription(),
       shortDescription: faker.lorem.sentence(),
-      price: faker.number.int({ min: 100000, max: 2000000 }), // giá khóa học
+      price: faker.number.int({ min: 100000, max: 2000000 }),
       status: faker.helpers.arrayElement(["draft", "published"]),
       thumbnailUrl: faker.image.url(),
       categoryId: category.id,

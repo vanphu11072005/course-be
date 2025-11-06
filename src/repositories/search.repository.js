@@ -3,8 +3,6 @@ import { Op } from "sequelize";
 
 class SearchRepository {
   async searchAll(query) {
-    console.log("🧩 [Repository] Query nhận:", query);
-
     if (!query) return [];
 
     try {
@@ -35,12 +33,6 @@ class SearchRepository {
       const orders = await db.Order.findAll({
         where: { note: { [Op.like]: `%${query}%` } },
         limit: 5,
-      });
-
-      console.log("✅ [Repository] Tìm thấy:", {
-        users: users.length,
-        courses: courses.length,
-        orders: orders.length,
       });
 
       return [

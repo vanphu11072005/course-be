@@ -13,17 +13,20 @@ export const generateAccessToken = (userId) => {
 /**
  * Tạo refresh token và lưu vào DB
  * @param {string} userId
- * @param {object} userService - instance của UserService
+ * @param {object} refreshTokenRepo - instance của UserService
  */
-export const generateRefreshToken = async (userId, userService) => {
-  if (!userService) throw new Error("userService instance required");
+export const generateRefreshToken = async (userId, refreshTokenRepo) => {
+  if (!refreshTokenRepo) throw new Error("refreshTokenRepo required");
+  // Đảm bảo chỉ 1 refresh token cho 1 user: xóa token cũ trước khi tạo
+  await refreshTokenRepo.revokeByUserId(userId);
 
   const refreshToken = jwt.sign({ sub: userId }, jwtConfig.JWT_REFRESH_SECRET, {
     expiresIn: jwtConfig.JWT_REFRESH_EXPIRES_IN,
   });
 
-  // Cập nhật vào DB
-  await userService.updateUser(userId, { refreshToken }, true);
+  // Lấy expiresAt từ token và lưu vào bảng refresh_tokens
+  const expiresAt = getExpiresAtFromToken(refreshToken);
+  await refreshTokenRepo.create({ userId, token: refreshToken, expiresAt });
 
   return refreshToken;
 };
@@ -32,14 +35,18 @@ export const generateRefreshToken = async (userId, userService) => {
  * Tạo cả 2 token
  * @param {string} userId
  * @param {boolean} accessTokenOnly - nếu true chỉ trả accessToken
- * @param {object} userService - instance của UserService
+ * @param {object} refreshTokenRepo
  */
-export const generateTokens = async (userId, accessTokenOnly = false, userService) => {
+export const generateTokens = async (
+  userId,
+  accessTokenOnly = false,
+  refreshTokenRepo
+) => {
   const accessToken = generateAccessToken(userId);
 
   if (accessTokenOnly) return { accessToken };
 
-  const refreshToken = await generateRefreshToken(userId, userService);
+  const refreshToken = await generateRefreshToken(userId, refreshTokenRepo);
   return { accessToken, refreshToken };
 };
 

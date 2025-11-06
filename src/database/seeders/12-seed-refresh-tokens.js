@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function up(queryInterface, Sequelize) {
   const now = new Date();
+  
   const users = await queryInterface.sequelize.query(
     `SELECT id FROM users LIMIT 5`,
     { type: Sequelize.QueryTypes.SELECT }

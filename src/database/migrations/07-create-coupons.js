@@ -47,6 +47,8 @@ export async function up(queryInterface, Sequelize) {
       defaultValue: Sequelize.fn("NOW"),
     },
   });
+
+  await queryInterface.addIndex('coupons', ['status'], { name: 'idx_coupons_status' });
 }
 
 export async function down(queryInterface) {

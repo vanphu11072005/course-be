@@ -49,6 +49,9 @@ export async function up(queryInterface, Sequelize) {
       defaultValue: Sequelize.fn("NOW"),
     },
   });
+
+  await queryInterface.addIndex('payments', ['orderId'], { name: 'idx_payments_orderId' });
+  await queryInterface.addIndex('payments', ['transactionId'], { name: 'idx_payments_transactionId' });
 }
 
 export async function down(queryInterface) {

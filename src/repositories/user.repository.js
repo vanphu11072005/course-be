@@ -37,8 +37,6 @@ class UserRepository {
       orderArray.push([sortField, orderDir]);
     } else if (sortField === "dateOfBirth") {
       orderArray.push([{ model: db.Profile, as: "profile" }, "dateOfBirth", orderDir]);
-    } else if (["fullName"].includes(sortField)) {
-      orderArray.push([{ model: db.Profile, as: "profile" }, sortField, orderDir]);
     }
 
     const include = [
@@ -109,7 +107,6 @@ class UserRepository {
       status: userData.status || "active",
     });
 
-    // ✅ Nếu có profile => tạo kèm
     if (userData.profile) {
       await db.Profile.create({
         id: uuidv4(),
@@ -121,7 +118,6 @@ class UserRepository {
       });
     }
 
-    // Lấy lại user có include role + profile
     return this.getUserById(newUser.id);
   }
 

@@ -17,13 +17,31 @@ export default (sequelize) => {
         primaryKey: true,
         allowNull: false,
       },
+      userId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: { model: "users", key: "id" },
+        onDelete: "CASCADE",
+      },
+      courseId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: { model: "courses", key: "id" },
+        onDelete: "CASCADE",
+      },
+      orderItemId: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        references: { model: "order_items", key: "id" },
+        onDelete: "SET NULL",
+      },
       progress: { type: DataTypes.JSON, allowNull: true },
       startedAt: { type: DataTypes.DATE, allowNull: true },
       completedAt: { type: DataTypes.DATE, allowNull: true },
     },
     {
       sequelize, // truyền kết nối
-      modelName: "Enrollment", // tên model
+      modelName: "Enrollment",
       tableName: "enrollments",
       timestamps: true,
     }

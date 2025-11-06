@@ -1,5 +1,6 @@
 import BaseController from "./base.controller.js";
 import UserService from "../services/user.service.js";
+import RefreshTokenRepository from "../repositories/refreshToken.repository.js";
 import * as HashHelper from "../helpers/hash.helper.js";
 import * as JwtHelper from "../helpers/jwt.helper.js";
 import * as MailHelper from "../helpers/mailer.helper.js";
@@ -9,6 +10,7 @@ class AuthController extends BaseController {
   constructor() {
     super();
     this.service = new UserService();
+    this.refreshTokenRepo = new RefreshTokenRepository();
   }
 
   async register(req, res) {
@@ -22,7 +24,11 @@ class AuthController extends BaseController {
       }
 
       const existingUser = await this.service.getUserByEmail(email);
-      if (existingUser) return res.status(400).json({ message: "User exists" });
+      if (existingUser)
+        return res.status(400).json({
+          message: "Email đã được sử dụng",
+          field: "email",
+        });
 
       const studentRole = await db.Role.findOne({ where: { name: "student" } });
       if (!studentRole) {
@@ -90,17 +96,22 @@ class AuthController extends BaseController {
 
   async login(req, res) {
     const { email, password } = req.body;
-    const user = await this.service.getUserByEmail(email, true); // with password
-    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+    const user = await this.service.getUserByEmail(email, true);
+    if (!user)
+      return res.status(400).json({
+        message: "Email hoặc mật khẩu không chính xác",
+      });
 
     const valid = await HashHelper.comparePassword(password, user.passwordHash);
-    if (!valid) return res.status(400).json({ message: "Invalid credentials" });
+    if (!valid)
+      return res.status(400).json({
+        message: "Email hoặc mật khẩu không chính xác",
+      });
 
-    // ✅ Luôn trả cả 2 token, truyền this.service vào helper
     const { accessToken, refreshToken } = await JwtHelper.generateTokens(
       user.id,
       false,
-      this.service
+      this.refreshTokenRepo
     );
 
     // Set token vào cookie
@@ -118,7 +129,6 @@ class AuthController extends BaseController {
 
   async refreshToken(req, res) {
     const token = req.cookies?.refreshToken || req.body?.refreshToken;
-    console.log(">>> Refresh token received:", token);
 
     if (!token)
       return res.status(401).json({ message: "Missing refresh token" });
@@ -127,22 +137,19 @@ class AuthController extends BaseController {
     if (!payload)
       return res.status(403).json({ message: "Invalid refresh token" });
 
-    const user = await this.service.getUserById(payload.sub, true);
-
-    // Kiểm tra user tồn tại trước khi đọc refreshToken
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Kiểm tra refreshToken tồn tại và trùng với token client gửi
-    if (!user.refreshToken || user.refreshToken !== token) {
+    // Kiểm tra token có tồn tại trong bảng refresh_tokens
+    const stored = await this.refreshTokenRepo.findByToken(token);
+    if (!stored || stored.userId !== payload.sub)
       return res.status(403).json({ message: "Refresh token revoked" });
-    }
+
+    // Tìm user để trả về nếu cần
+    const user = await this.service.getUserById(payload.sub);
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     const { accessToken, refreshToken } = await JwtHelper.generateTokens(
       payload.sub,
       false,
-      this.service
+      this.refreshTokenRepo
     );
 
     JwtHelper.setTokensAsCookies(res, accessToken, refreshToken);
@@ -151,8 +158,7 @@ class AuthController extends BaseController {
 
   async logout(req, res) {
     const userId = req.user?.id;
-    if (userId)
-      await this.service.updateUser(userId, { refreshToken: null }, true);
+    if (userId) await this.refreshTokenRepo.revokeByUserId(userId);
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
     res.json({ message: "Signed out" });

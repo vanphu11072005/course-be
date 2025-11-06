@@ -3,10 +3,12 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function up(queryInterface) {
   const now = new Date();
+
   const users = await queryInterface.sequelize.query(
     `SELECT id FROM users WHERE roleId IN (SELECT id FROM roles WHERE name='student')`,
     { type: queryInterface.sequelize.QueryTypes.SELECT }
   );
+  
   const courses = await queryInterface.sequelize.query(
     `SELECT id FROM courses`,
     { type: queryInterface.sequelize.QueryTypes.SELECT }

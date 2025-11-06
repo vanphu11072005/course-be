@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-export async function up(queryInterface, Sequelize) {
+export async function up(queryInterface) {
   const now = new Date();
 
   await queryInterface.bulkInsert("settings", [

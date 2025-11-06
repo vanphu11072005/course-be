@@ -1,6 +1,5 @@
 import UserService from "../services/user.service.js";
 import BaseController from "./base.controller.js";
-import slugify from "slugify";
 
 class UserController extends BaseController {
   constructor() {
@@ -55,7 +54,12 @@ class UserController extends BaseController {
   // Tạo user mới
   async createUser(req, res) {
     const data = req.body;
-    const newUser = await this.service.createUser(data);
+    
+    if (req.file) {
+      data.avatarUrl = `/uploads/${req.file.filename}`;
+    } else {
+      data.avatarUrl = "/uploads/default-avatar.jpg";
+    }
 
     if (typeof data.profile === "string") {
       try {
@@ -64,14 +68,9 @@ class UserController extends BaseController {
         data.profile = null;
       }
     }
-
-    if (req.file) {
-      data.avatarUrl = `/uploads/${req.file.filename}`;
-    } else {
-      data.avatarUrl = "/uploads/default-avatar.jpg";
-    }
-
-
+    
+    const newUser = await this.service.createUser(data);
+    
     res.status(201).json({
       status: true,
       message: "User created successfully",

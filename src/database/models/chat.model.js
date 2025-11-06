@@ -3,8 +3,8 @@ import { Model, DataTypes } from "sequelize";
 export default (sequelize) => {
   class Chat extends Model {
     static associate(models) {
-        Chat.belongsTo(models.User, { as: "sender", foreignKey: "senderId" });
-        Chat.belongsTo(models.User, { as: "receiver", foreignKey: "receiverId" });
+        this.belongsTo(models.User, { foreignKey: "senderId", as: "sender" });
+        this.belongsTo(models.User, { foreignKey: "receiverId", as: "receiver" });
     }
   }
 

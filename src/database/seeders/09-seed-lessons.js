@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function up(queryInterface) {
   const now = new Date();
+
   const courses = await queryInterface.sequelize.query(
     `SELECT id FROM courses`,
     { type: queryInterface.sequelize.QueryTypes.SELECT }
@@ -20,7 +21,7 @@ export async function up(queryInterface) {
         content: faker.lorem.paragraphs(2),
         videoUrl: faker.internet.url(),
         resourceUrls: JSON.stringify([faker.internet.url(), faker.internet.url()]),
-        duration: faker.number.int({ min: 300, max: 1800 }), // 5-30 phút
+        duration: faker.number.int({ min: 300, max: 1800 }),
         position: i + 1,
         isFreePreview: faker.datatype.boolean(),
         createdAt: now,

@@ -8,11 +8,9 @@ class SearchController extends BaseController {
   }
 
   async searchAll(req, res) {
-    console.log("🔍 [Controller] Query nhận từ URL:", req.query.query); // log query nhận
     const { query } = req.query;
     try {
       const results = await this.service.searchAll(query);
-      console.log("📥 [Controller] Kết quả search trả về:", results); // log kết quả
       res.json(results);
     } catch (error) {
       console.error("❌ [Controller] Lỗi search:", error);
@@ -20,7 +18,7 @@ class SearchController extends BaseController {
       status: false,
       message: "Lỗi server khi tìm kiếm",
       error: error.message,
-      stack: error.stack, // thêm dòng này để xem lỗi chi tiết trong terminal
+      stack: error.stack,
     });
     }
   }

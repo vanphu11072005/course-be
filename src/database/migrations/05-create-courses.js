@@ -44,6 +44,10 @@ export async function up(queryInterface, Sequelize) {
       defaultValue: Sequelize.fn("NOW"),
     },
   });
+
+  await queryInterface.addIndex('courses', ['categoryId'], { name: 'idx_courses_categoryId' });
+  await queryInterface.addIndex('courses', ['instructorId'], { name: 'idx_courses_instructorId' });
+  await queryInterface.addIndex('courses', ['status', 'createdAt'], { name: 'idx_courses_status_createdAt' });
 }
 
 export async function down(queryInterface) {

@@ -44,6 +44,8 @@ export async function up(queryInterface, Sequelize) {
     type: "unique",
     name: "unique_user_course_enrollment",
   });
+
+  await queryInterface.addIndex('enrollments', ['courseId'], { name: 'idx_enrollments_courseId' });
 }
 
 export async function down(queryInterface) {

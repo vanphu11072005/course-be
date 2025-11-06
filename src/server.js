@@ -44,9 +44,8 @@ app.use(
     origin: process.env.CLIENT_URL, // replace with your React app URL
     credentials: true,
   })
-); // Enable CORS for all routes
-// console.log('req.cookies:', req.cookies);
-// console.log('req.body:', req.body);
+); 
+
 app.post(
   `/api/${AppConfig.apiVersion}/payments/webhook`,
   express.raw({ type: "application/json" }),
@@ -77,21 +76,6 @@ passport.use(
   )
 );
 app.use(passport.initialize());
-// ===== PASSPORT JWT STRATEGY =====
-
-// ===== SocketIO =====
-// io.on("connection", (socket) => {
-//   console.log("a user connected");
-//   // socket.broadcast.emit("broadcast");
-//   socket.on("foo", (msg) => {
-//     // socket.emit("bar", `server send: ${msg}`);
-//     // io.emit("bar", "sent to all clients");
-//   });
-//   socket.on("disconnect", () => {
-//     console.log("user disconnected");
-//   });
-// });
-// ===== SocketIO =====
 
 // cho phép truy cập thư mục uploads
 app.use("/uploads", express.static("uploads"));
@@ -111,14 +95,13 @@ app.get(
   getMaintenanceStatus
 );
 
-// 🔥 Check bảo trì toàn hệ thống
+// Check bảo trì toàn hệ thống
 app.use(checkMaintenance);
 
 app.use(`/api/${AppConfig.apiVersion}`, ApiRouter[AppConfig.apiVersion]);
 
 // ===== Error handler (catch all) =====
-// ===== Error handler (catch all) =====
-app.use((err, req, res, next) => {
+app.use((err, res) => {
   console.error("❌ Error:", err);
 
   res.status(500).json({
