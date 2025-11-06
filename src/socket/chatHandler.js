@@ -1,11 +1,9 @@
-const userSockets = new Map(); // { userId: socketId }
-const userStatus = new Map();  // { userId: { online, lastSeen } }
-const typingUsers = new Map(); // { userId: timeoutId }
+const userSockets = new Map(); 
+const userStatus = new Map(); 
+const typingUsers = new Map();
 
 export const initChatSocket = (io, db) => {
   io.on("connection", (socket) => {
-    console.log("✅ User connected:", socket.id);
-
     // ===== JOIN ROOM =====
     socket.on("join", ({ userId, role }) => {
       socket.userId = userId;
@@ -126,8 +124,6 @@ export const initChatSocket = (io, db) => {
           online: false, 
           lastSeen 
         });
-
-        console.log(`🔴 User ${userId} offline`);
       }
     });
   });

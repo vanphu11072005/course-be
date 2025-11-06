@@ -27,7 +27,7 @@ const port = AppConfig.port;
 // ===== Socket.IO =====
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: process.env.CLIENT_URL,
     credentials: true,
   },
 });
@@ -40,7 +40,10 @@ db.sequelize.sync({ force: false });
 app.set("db", db);
 
 app.use(
-  cors()
+  cors({
+    origin: process.env.CLIENT_URL, // replace with your React app URL
+    credentials: true,
+  })
 ); 
 
 app.post(

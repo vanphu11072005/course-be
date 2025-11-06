@@ -52,11 +52,10 @@ export const purchaseCourse = async (req, res) => {
         accessStatus: "revoked",
       });
     }
-
     // 5️⃣ Tạo PaymentIntent trên Stripe
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(totalAmount * 10),
-      currency: "usd",
+      amount: Math.round(totalAmount),
+      currency: "vnd",
       metadata: {
         orderId: order.id,
         courseIds: courseIds.join(","),

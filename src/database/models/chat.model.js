@@ -21,7 +21,7 @@ export default (sequelize) => {
         allowNull: true,
       },
       senderRole: {
-        type: DataTypes.ENUM("user", "admin", "ai"),
+        type: DataTypes.ENUM("user", "admin"),
         allowNull: false,
       },
       receiverId: {

@@ -13,7 +13,7 @@ export async function up(queryInterface, Sequelize) {
       onDelete: "CASCADE",
     },
     senderRole: {
-      type: Sequelize.ENUM("user", "admin", "ai"),
+      type: Sequelize.ENUM("user", "admin"),
       allowNull: false,
     },
     receiverId: {

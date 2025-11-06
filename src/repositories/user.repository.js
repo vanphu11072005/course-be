@@ -9,10 +9,10 @@ class UserRepository {
   }
 
   // Lấy danh sách users (có phân trang, search, filter role)
-  async getAllUsers({ 
-    page = 1, 
-    pageSize = 10, 
-    role, 
+  async getAllUsers({
+    page = 1,
+    pageSize = 10,
+    role,
     search,
     sortField = "createdAt",
     sortOrder = "desc",
@@ -36,12 +36,20 @@ class UserRepository {
     if (directColumns.includes(sortField)) {
       orderArray.push([sortField, orderDir]);
     } else if (sortField === "dateOfBirth") {
-      orderArray.push([{ model: db.Profile, as: "profile" }, "dateOfBirth", orderDir]);
+      orderArray.push([
+        { model: db.Profile, as: "profile" },
+        "dateOfBirth",
+        orderDir,
+      ]);
     }
 
     const include = [
       { model: db.Role, as: "role" },
-      { model: db.Profile, as: "profile", attributes: ["fullName", "phone", "address", "dateOfBirth"] },
+      {
+        model: db.Profile,
+        as: "profile",
+        attributes: ["fullName", "phone", "address", "dateOfBirth"],
+      },
     ];
 
     if (role) {

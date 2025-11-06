@@ -123,7 +123,6 @@ class AuthController extends BaseController {
       email: user.email,
       roleId: user.roleId,
     };
-
     res.json({ accessToken, refreshToken, user: userData });
   }
 
