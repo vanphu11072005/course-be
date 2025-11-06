@@ -1,6 +1,10 @@
-const userSockets = new Map(); 
-const userStatus = new Map(); 
+import ChatService from "../services/chat.service.js";
+
+const userSockets = new Map();
+const userStatus = new Map();
 const typingUsers = new Map();
+
+const chatService = new ChatService();
 
 export const initChatSocket = (io, db) => {
   io.on("connection", (socket) => {
@@ -29,30 +33,22 @@ export const initChatSocket = (io, db) => {
 
     // ===== SEND MESSAGE =====
     socket.on("sendMessage", async (data) => {
-      const { 
-        senderId, 
-        receiverRole, 
-        targetUserId, 
-        text 
-      } = data;
+      const { senderId, receiverRole, targetUserId, text } = data;
 
       try {
-        // Lưu tin nhắn vào DB
-        await db.Chat.create({
+        // Delegate DB write to service (single point of DB logic)
+        await chatService.createMessage({
           senderId: senderId !== "admin01" ? senderId : null,
           senderRole: socket.role,
-          receiverId: targetUserId !== "admin01" ? 
-            targetUserId : null,
+          receiverId: targetUserId !== "admin01" ? targetUserId : null,
           receiverRole,
           message: text,
           isRead: false,
         });
 
         // Gửi realtime
-        const targetSocket = receiverRole === "admin" 
-          ? "admin01" 
-          : targetUserId;
-        
+        const targetSocket = receiverRole === "admin" ? "admin01" : targetUserId;
+
         io.to(targetSocket).emit("receiveMessage", {
           senderId,
           text,
@@ -61,7 +57,7 @@ export const initChatSocket = (io, db) => {
 
         console.log(`📨 Message sent: ${senderId} → ${targetSocket}`);
       } catch (error) {
-        console.error("❌ Error saving message:", error);
+        console.error("❌ Error saving message via service:", error);
       }
     });
 
