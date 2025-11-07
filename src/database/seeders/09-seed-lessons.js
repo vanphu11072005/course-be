@@ -12,7 +12,7 @@ export async function up(queryInterface) {
   const lessons = [];
 
   for (const course of courses) {
-    const lessonCount = faker.number.int({ min: 3, max: 10 });
+    const lessonCount = faker.number.int({ min: 1, max: 3 });
     for (let i = 0; i < lessonCount; i++) {
       lessons.push({
         id: uuidv4(),

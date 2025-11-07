@@ -43,7 +43,6 @@ export const initChatSocket = (io, db) => {
           receiverId: targetUserId !== "admin01" ? targetUserId : null,
           receiverRole,
           message: text,
-          isRead: false,
         });
 
         // Gửi realtime
@@ -86,7 +85,7 @@ export const initChatSocket = (io, db) => {
             isTyping: false 
           });
           typingUsers.delete(userId);
-        }, 3000);
+        }, 1000);
 
         typingUsers.set(userId, timeout);
       } else {

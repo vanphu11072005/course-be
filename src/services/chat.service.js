@@ -19,7 +19,7 @@ class ChatService {
         sender: chat.senderRole,
         text: chat.message,
         timestamp: chat.createdAt,
-        isRead: chat.isRead,
+        // isRead removed
         userName: chat.sender?.name || "Unknown",
       });
     });

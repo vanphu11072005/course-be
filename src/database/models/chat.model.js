@@ -36,10 +36,6 @@ export default (sequelize) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      isRead: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-      },
     },
     {
       sequelize,

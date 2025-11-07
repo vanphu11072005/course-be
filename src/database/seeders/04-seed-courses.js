@@ -16,7 +16,7 @@ export async function up(queryInterface, Sequelize) {
 
   const courses = [];
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 10; i++) {
     const category = faker.helpers.arrayElement(categories);
     const instructor = faker.helpers.arrayElement(instructors);
 

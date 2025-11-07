@@ -30,11 +30,6 @@ export async function up(queryInterface, Sequelize) {
       type: Sequelize.TEXT,
       allowNull: false,
     },
-    isRead: {
-      type: Sequelize.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
     createdAt: {
       type: Sequelize.DATE,
       allowNull: false,
