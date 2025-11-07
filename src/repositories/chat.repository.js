@@ -1,10 +1,10 @@
 import db from "../database/models/index.js";
+import { Op } from "sequelize";
 
 class ChatRepository {
   constructor() {
     this.model = db.Chat;
     this.userModel = db.User;
-    this.Sequelize = db.Sequelize;
   }
 
   // Lấy tất cả tin nhắn giữa user và admin (dùng cho admin)
@@ -26,7 +26,6 @@ class ChatRepository {
 
   // Lấy lịch sử chat cho một user cụ thể
   async getByUserId(userId) {
-    const { Op } = this.Sequelize;
     return this.model.findAll({
       where: {
         [Op.or]: [{ senderId: userId }, { receiverId: userId }],

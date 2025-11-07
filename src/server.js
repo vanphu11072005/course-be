@@ -18,7 +18,10 @@ import ApiRouter from "./routes/index.js";
 
 import middlewares from "./middlewares/index.js";
 const { auth, role, checkMaintenance } = middlewares;
-import { toggleMaintenance, getMaintenanceStatus } from "./controllers/setting.controller.js";
+import {
+  toggleMaintenance,
+  getMaintenanceStatus,
+} from "./controllers/setting.controller.js";
 
 const app = express();
 const server = createServer(app);
@@ -44,7 +47,7 @@ app.use(
     origin: process.env.CLIENT_URL, // replace with your React app URL
     credentials: true,
   })
-); 
+);
 
 app.post(
   `/api/${AppConfig.apiVersion}/payments/webhook`,
@@ -83,7 +86,7 @@ app.use("/uploads", express.static("uploads"));
 // Admin toggle bảo trì
 app.put(
   `/api/${AppConfig.apiVersion}/settings/maintenance`,
-  auth,        // verify token, set req.user
+  auth, // verify token, set req.user
   role("admin"),
   toggleMaintenance
 );
@@ -91,7 +94,7 @@ app.put(
 // API check maintenance cho FE
 app.get(
   `/api/${AppConfig.apiVersion}/settings/maintenance`,
-  checkMaintenance,  // block user thường nếu maintenance
+  checkMaintenance, // block user thường nếu maintenance
   getMaintenanceStatus
 );
 
